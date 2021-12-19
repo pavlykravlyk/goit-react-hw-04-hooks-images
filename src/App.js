@@ -30,7 +30,7 @@ export default function App() {
   }, [searchQuery]);
 
   useEffect(() => {
-    if (searchQuery !== '') {
+    if (searchQuery !== '' && page !== 1) {
       setStatus('pending');
       getImagesFromFetch();
       scroll.scrollToBottom();
