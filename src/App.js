@@ -20,24 +20,24 @@ export default function App() {
   const [status, setStatus] = useState('idle');
 
   useEffect(() => {
-    if (searchQuery !== '') {
+    if (searchQuery) {
       setStatus('pending');
       setPage(1);
       setImages([]);
-      getImagesFromFetch();
+      findImageByName();
       scroll.scrollToBottom();
     }
   }, [searchQuery]);
 
   useEffect(() => {
-    if (searchQuery !== '' && page !== 1) {
+    if (searchQuery && page !== 1) {
       setStatus('pending');
-      getImagesFromFetch();
+      findImageByName();
       scroll.scrollToBottom();
     }
   }, [page]);
 
-  const getImagesFromFetch = async () => {
+  const findImageByName = async () => {
     try {
       const response = await PixabayApiService(searchQuery, page);
       if (response.ok) {
@@ -59,17 +59,9 @@ export default function App() {
     setCurrImg(image);
   };
 
-  const incrementPage = () => {
-    setPage(prevState => prevState + 1);
-  };
-
-  const handleSearchbarFormSubmit = searchQuery => {
-    setSearchQuery(searchQuery);
-  };
-
   return (
     <div className={styles.App}>
-      <Searchbar onSubmit={handleSearchbarFormSubmit} />
+      <Searchbar onSubmit={setSearchQuery} />
       {status === 'idle' && <div>Free images</div>}
 
       {status === 'rejected' && <h1>{error.message}</h1>}
@@ -77,8 +69,10 @@ export default function App() {
       {status === 'resolved' && (
         <>
           <ImageGallery images={images} onOpenModal={toggleModal} />
-          {images.length !== 0 && <Button onLoadMore={incrementPage} />}
-          {images.length === 0 && <div>{searchQuery} no found</div>}
+          {images.length !== 0 && (
+            <Button onLoadMore={() => setPage(prevState => prevState + 1)} />
+          )}
+          {images.length === 0 && <div>{searchQuery} not found</div>}
         </>
       )}
 
