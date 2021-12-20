@@ -9,12 +9,12 @@ export default function Modal({ onClose, children }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const handleKeyDown = event => {
-    event.code === 'Escape' && onClose();
+  const handleKeyDown = ({ code }) => {
+    code === 'Escape' && onClose();
   };
 
-  const handleOverlayClick = event => {
-    event.currentTarget === event.target && onClose();
+  const handleOverlayClick = ({ currentTarget, target }) => {
+    currentTarget === target && onClose();
   };
 
   return createPortal(
