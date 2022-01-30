@@ -22,7 +22,7 @@ export default function App() {
   useEffect(() => {
     const findImageByName = async () => {
       try {
-        const response = await API(query);
+        const response = await API(query, page);
         setImages(response);
         setStatus('resolved');
       } catch (error) {
@@ -35,7 +35,6 @@ export default function App() {
     if (query) {
       setStatus('pending');
       setPage(1);
-      setImages([]);
       findImageByName();
     }
   }, [query]);
@@ -43,7 +42,7 @@ export default function App() {
   useEffect(() => {
     const findImageByName = async () => {
       try {
-        const response = await API(page);
+        const response = await API(query, page);
         setImages(state => [...state, ...response]);
         setStatus('resolved');
       } catch (error) {
@@ -59,6 +58,10 @@ export default function App() {
     }
   }, [page]);
 
+  useEffect(() => {
+    status === 'resolved' && scroll.scrollToBottom();
+  }, [status]);
+
   const toggleModal = image => {
     setShowModal(!showModal);
     setCurrImg(image);
@@ -68,8 +71,9 @@ export default function App() {
     <div className={styles.App}>
       <Searchbar onSubmit={setQuery} />
       {status === 'idle' && <div>Free images</div>}
+
       {status === 'rejected' && <h1>{error.message}</h1>}
-      {status === 'resolved' && scroll.scrollToBottom()}
+
       {status === 'resolved' && (
         <>
           <ImageGallery images={images} onOpenModal={toggleModal} />
